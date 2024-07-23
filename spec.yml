@@ -1,0 +1,40 @@
+_format_version: '3.0'
+_transform: false
+services:
+- name: my-service
+  url: https://example.com
+  plugins:
+  - name: request-transformer-improved
+    config:
+      headers:
+        add:
+          header-key: '{vault://avault-value/JSON_KEY/test-key}'
+          env-key: '{vault://env/secret-vault-value}'
+          header-key2: '{vault://avault-value/ADMIN_PASSWORD_DDLELE}'
+          header-O: '{vault://avault-value/TEST}'
+  - name: opentelemetry
+    config:
+      resource_attributes:
+        "service.name": "kong-dev"
+      endpoint: http://host.docker.internal:4318/v1/traces
+      headers:
+        header-key: '{vault://avault-value/ADMIN_PASSWORD_DDLELE}'
+  routes:
+  - name: my-route
+    paths:
+    - /testroute
+vaults:
+- name: env
+  prefix: my-env
+- description: ENV vault for secrets
+  config:
+    ttl: 300
+    auth:
+      clientId : ""
+      clientSecret : ""
+    query:
+      environment : prod
+      workspaceId : ""
+  name: infiscal
+  # value to use instead of default vault name in the reference
+  prefix: avault-value
